@@ -5,3 +5,6 @@ __pycache__/
 .env.local
 *.log
 NOTES.md
+*.egg-info/
+build/
+dist/
