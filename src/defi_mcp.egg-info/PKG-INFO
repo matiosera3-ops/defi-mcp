@@ -1,0 +1,37 @@
+Metadata-Version: 2.4
+Name: defi-mcp
+Version: 0.1.0
+Summary: An MCP server giving AI agents access to DeFi data on EVM chains.
+Author-email: Matthieu Ratsitohery <matiosera3@gmail.com>
+License: MIT
+Project-URL: Repository, https://github.com/matiosera3-ops/defi-mcp
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: mcp>=1.0.0
+Requires-Dist: web3>=7.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Dynamic: license-file
+
+﻿# defi-mcp
+
+An MCP server giving AI agents direct access to DeFi data on EVM chains.
+
+**Status:** Early development. Not yet ready for public use.
+
+## What it will do
+
+Expose tools for any MCP-compatible LLM (Claude, etc.) to:
+- Read wallet token balances across chains
+- Analyze Aave v3 positions and health factors
+- Track Uniswap v3 LP positions and impermanent loss
+- Simulate swaps with realistic slippage
+- Monitor protocol TVLs and oracle prices
+
+## Supported chains
+
+- Polygon (more soon)
+
+## License
+
+MIT
