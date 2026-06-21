@@ -3,6 +3,7 @@
 Exposes tools for AI agents to interact with DeFi protocols on EVM chains.
 Currently supports: Polygon.
 """
+from defi_mcp.tools.aave_position import get_aave_position as _get_aave_position
 from mcp.server.fastmcp import FastMCP
 from defi_mcp.tools.balance import get_token_balance as _get_token_balance
 
@@ -35,6 +36,20 @@ def get_token_balance(address: str, token_symbol: str, chain: str = "polygon") -
     """
     return _get_token_balance(address, token_symbol, chain)
 
+@mcp.tool()
+def get_aave_position(address: str, chain: str = "polygon") -> dict:
+    """Get a user's Aave v3 lending/borrowing position on a given chain.
+
+    Returns total collateral, total debt, available borrowing power,
+    liquidation threshold, LTV, and health factor — all in USD where applicable.
+    A health factor below 1.0 means the position is at risk of liquidation.
+    A null health factor means the user has no outstanding debt.
+
+    Args:
+        address: The wallet address to check
+        chain: The blockchain to query. Default: polygon.
+    """
+    return _get_aave_position(address, chain)
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
