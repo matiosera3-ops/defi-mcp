@@ -3,6 +3,7 @@
 Exposes tools for AI agents to interact with DeFi protocols on EVM chains.
 Currently supports: Polygon.
 """
+from defi_mcp.tools.price import get_token_price as _get_token_price
 from defi_mcp.tools.aave_position import get_aave_position as _get_aave_position
 from mcp.server.fastmcp import FastMCP
 from defi_mcp.tools.balance import get_token_balance as _get_token_balance
@@ -50,6 +51,18 @@ def get_aave_position(address: str, chain: str = "polygon") -> dict:
         chain: The blockchain to query. Default: polygon.
     """
     return _get_aave_position(address, chain)
+
+@mcp.tool()
+def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
+    """Get the current USD price of a token from a Chainlink price feed.
+
+    Supports: ETH, WETH, MATIC, WMATIC, WBTC, USDC, USDT on Polygon.
+
+    Args:
+        token_symbol: The token symbol (e.g. ETH, WBTC, USDC)
+        chain: The blockchain to query. Default: polygon.
+    """
+    return _get_token_price(token_symbol, chain)
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
