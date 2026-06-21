@@ -8,3 +8,5 @@ NOTES.md
 *.egg-info/
 build/
 dist/
+mcp-publisher.exe
+mcp-publisher.tar.gz

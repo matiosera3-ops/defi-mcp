@@ -1,6 +1,6 @@
 [project]
 name = "defi-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "An MCP server giving AI agents access to DeFi data on EVM chains."
 authors = [{name = "Matthieu Ratsitohery", email = "matiosera3@gmail.com"}]
 license = {text = "MIT"}
