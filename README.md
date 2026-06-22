@@ -1,153 +1,137 @@
-# MCP Registry
+# defi-mcp
 
-The MCP registry provides MCP clients with a list of MCP servers, like an app store for MCP servers.
+An MCP (Model Context Protocol) server that gives AI agents direct, on-chain access to DeFi data on EVM chains — wallet balances, Aave v3 lending positions, and live token prices, with no centralized API in the middle.
 
-[**📤 Publish my MCP server**](docs/modelcontextprotocol-io/quickstart.mdx) | [**⚡️ Live API docs**](https://registry.modelcontextprotocol.io/docs) | [**👀 Ecosystem vision**](docs/design/ecosystem-vision.md) | 📖 **[Full documentation](./docs)**
+**Status:** Live and functional. 4 tools available today, more on the roadmap.
 
-## Development Status
+## Why
 
-**2025-10-24 update**: The Registry API has entered an **API freeze (v0.1)** 🎉. For the next month or more, the API will remain stable with no breaking changes, allowing integrators to confidently implement support. This freeze applies to v0.1 while development continues on v0. We'll use this period to validate the API in real-world integrations and gather feedback to shape v1 for general availability. Thank you to everyone for your contributions and patience—your involvement has been key to getting us here!
+Most "DeFi + AI" integrations route through a centralized API that can rate-limit, paywall, or simply disappear. `defi-mcp` talks directly to the chain (via your own RPC provider) and to first-party oracles (Chainlink), so the data your AI agent gets is exactly what's on-chain — verifiable, and not dependent on a third-party API staying online.
 
-**2025-09-08 update**: The registry has launched in preview 🎉 ([announcement blog post](https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/)). While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. A general availability (GA) release will follow later. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions/new?category=ideas) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016) ([joining details here](https://modelcontextprotocol.io/community/communication)).
+## Tools
 
-Current key maintainers:
-- **Adam Jones** (Anthropic) [@domdomegg](https://github.com/domdomegg)  
-- **Tadas Antanavicius** (PulseMCP) [@tadasant](https://github.com/tadasant)
-- **Toby Padilla** (GitHub) [@toby](https://github.com/toby)
-- **Radoslav (Rado) Dimitrov** (Stacklok) [@rdimitrov](https://github.com/rdimitrov)
+### `get_token_balance`
+Reads the ERC-20 balance of any wallet address for a supported token.
 
-## Contributing
+Supported tokens on Polygon: `USDC`, `USDC.e`, `USDT`, `WETH`, `WMATIC`, `WBTC`, `DAI`, `AAVE`.
 
-We use multiple channels for collaboration - see [modelcontextprotocol.io/community/communication](https://modelcontextprotocol.io/community/communication).
-
-Often (but not always) ideas flow through this pipeline:
-
-- **[Discord](https://modelcontextprotocol.io/community/communication)** - Real-time community discussions
-- **[Discussions](https://github.com/modelcontextprotocol/registry/discussions)** - Propose and discuss product/technical requirements
-- **[Issues](https://github.com/modelcontextprotocol/registry/issues)** - Track well-scoped technical work  
-- **[Pull Requests](https://github.com/modelcontextprotocol/registry/pulls)** - Contribute work towards issues
-
-### Quick start:
-
-#### Pre-requisites
-
-- **Docker**
-- **Go 1.24.x**
-- **ko** - Container image builder for Go ([installation instructions](https://ko.build/install/))
-- **golangci-lint v2.4.0**
-
-#### Running the server
-
-```bash
-# Start full development environment
-make dev-compose
+```json
+// get_token_balance(address="0x...", token_symbol="USDC", chain="polygon")
+{
+  "address": "0x...",
+  "token": "USDC",
+  "chain": "polygon",
+  "balance": 268.21,
+  "raw_balance": "268210000",
+  "decimals": 6
+}
 ```
 
-This starts the registry at [`localhost:8080`](http://localhost:8080) with PostgreSQL. The database uses ephemeral storage and is reset each time you restart the containers, ensuring a clean state for development and testing.
+### `get_aave_position`
+Reads a user's full Aave v3 lending/borrowing position: collateral, debt, available borrowing power, and health factor — straight from the Aave v3 Pool contract.
 
-**Note:** The registry uses [ko](https://ko.build) to build container images. The `make dev-compose` command automatically builds the registry image with ko and loads it into your local Docker daemon before starting the services.
-
-By default, the registry seeds from the production API with a filtered subset of servers (to keep startup fast). This ensures your local environment mirrors production behavior and all seed data passes validation. For offline development you can seed from a file without validation with `MCP_REGISTRY_SEED_FROM=data/seed.json MCP_REGISTRY_ENABLE_REGISTRY_VALIDATION=false make dev-compose`.
-
-The setup can be configured with environment variables in [docker-compose.yml](./docker-compose.yml) - see [.env.example](./.env.example) for a reference.
-
-<details>
-<summary>Alternative: Running a pre-built Docker image</summary>
-
-Pre-built Docker images are automatically published to GitHub Container Registry. Note that the image does not bundle PostgreSQL, so you need to run your own and point the registry at it via `MCP_REGISTRY_DATABASE_URL` (see [docker-compose.yml](./docker-compose.yml) for a working example):
-
-```bash
-# Run latest stable release
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:latest
-
-# Run latest from main branch (continuous deployment)
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main
-
-# Run specific release version
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:v1.0.0
-
-# Run development build from main branch
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main-20250906-abc123d
+```json
+// get_aave_position(address="0x...", chain="polygon")
+{
+  "address": "0x...",
+  "chain": "polygon",
+  "total_collateral_usd": 969.78,
+  "total_debt_usd": 288.16,
+  "available_borrows_usd": 484.86,
+  "liquidation_threshold_pct": 82.79,
+  "ltv_pct": 79.71,
+  "health_factor": 2.79,
+  "has_active_position": true
+}
 ```
 
-**Available tags:** 
-- **Releases**: `latest`, `v1.0.0`, `v1.1.0`, etc.
-- **Continuous**: `main` (latest main branch build)
-- **Development**: `main-<date>-<sha>` (specific commit builds)
+A `health_factor` below `1.0` means the position is at risk of liquidation. A `null` health factor means the user has no outstanding debt.
 
-</details>
+### `get_token_price`
+Reads the current USD price of a token directly from a Chainlink price feed — the same oracle DeFi protocols use internally, so the price is consistent with what `get_aave_position` reports.
 
-#### Publishing a server
+Supported on Polygon: `ETH`/`WETH`, `MATIC`/`WMATIC`, `WBTC`, `USDC`, `USDT`.
 
-To publish a server, we've built a simple CLI. You can use it with:
-
-```bash
-# Build the latest CLI
-make publisher
-
-# Use it!
-./bin/mcp-publisher --help
+```json
+// get_token_price(token_symbol="WBTC", chain="polygon")
+{
+  "token": "WBTC",
+  "chain": "polygon",
+  "price_usd": 63835.77,
+  "decimals": 8,
+  "updated_at": 1782032816
+}
 ```
 
-See [the publisher guide](./docs/modelcontextprotocol-io/quickstart.mdx) for more details.
+### `hello`
+Simple connectivity check — confirms the MCP server is reachable and responding.
 
-#### Other commands
+## Supported chains
+
+- Polygon
+
+More EVM chains are on the roadmap (see below).
+
+## Installation
+
+Requires Python 3.10+ and an RPC provider API key (e.g. [Alchemy](https://www.alchemy.com/), free tier works).
 
 ```bash
-# Run lint, unit tests and integration tests
-make check
+pip install defi-mcp
 ```
 
-There are also a few more helpful commands for development. Run `make help` to learn more, or look in [Makefile](./Makefile).
+Create a `.env` file in your working directory:
 
-<!--
-For Claude and other AI tools: Always prefer make targets over custom commands where possible.
--->
+```
+POLYGON_RPC_URL=https://polygon-mainnet.g.alchemy.com/v2/YOUR_API_KEY
+```
+
+## Usage with Claude Desktop
+
+Add this to your Claude Desktop MCP config (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "defi-mcp": {
+      "command": "uvx",
+      "args": ["defi-mcp"],
+      "env": {
+        "POLYGON_RPC_URL": "https://polygon-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop, and the tools above will be available to the model.
+
+## Testing locally
+
+You can test the server directly with the official [MCP Inspector](https://github.com/modelcontextprotocol/inspector):
+
+```bash
+npx @modelcontextprotocol/inspector uvx defi-mcp
+```
+
+## Roadmap
+
+- [ ] Track Uniswap v3 LP positions and impermanent loss
+- [ ] Simulate swaps with realistic slippage estimates
+- [ ] Monitor protocol TVLs
+- [ ] Additional chains (Ethereum, Arbitrum, Base)
+- [ ] `defi-mcp-cloud` — hosted tier with MEV-specific tools, caching, and higher rate limits
 
 ## Architecture
 
-### Project Structure
+Open-core model: this repository (MIT licensed) covers standard on-chain read tools. A separate `defi-mcp-cloud` will offer a hosted version with MEV-related tools, request caching, and managed RPC access for users who don't want to run their own infrastructure.
 
-```
-├── cmd/                     # Application entry points
-│   └── publisher/           # Server publishing tool
-├── data/                    # Seed data
-├── deploy/                  # Deployment configuration (Pulumi)
-├── docs/                    # Documentation
-├── internal/                # Private application code
-│   ├── api/                 # HTTP handlers and routing
-│   ├── auth/                # Authentication (GitHub OAuth, JWT, namespace blocking)
-│   ├── config/              # Configuration management
-│   ├── database/            # Data persistence (PostgreSQL)
-│   ├── service/             # Business logic
-│   ├── telemetry/           # Metrics and monitoring
-│   └── validators/          # Input validation
-├── pkg/                     # Public packages
-│   ├── api/                 # API types and structures
-│   │   └── v0/              # Version 0 API types
-│   └── model/               # Data models for server.json
-├── scripts/                 # Development and testing scripts
-├── tests/                   # Integration tests
-└── tools/                   # CLI tools and utilities
-    └── validate-*.sh        # Schema validation tools
-```
+## Contributing
 
-### Authentication
+Issues and PRs welcome. This is an early-stage project — feedback on what tools would actually be useful to you is especially valuable.
 
-Publishing supports multiple authentication methods:
-- **GitHub OAuth** - For publishing by logging into GitHub
-- **GitHub OIDC** - For publishing from GitHub Actions
-- **DNS verification** - For proving ownership of a domain and its subdomains
-- **HTTP verification** - For proving ownership of a domain
+## License
 
-The registry validates namespace ownership when publishing. E.g. to publish...:
-- `io.github.domdomegg/my-cool-mcp` you must login to GitHub as `domdomegg`, or be in a GitHub Action on domdomegg's repos
-- `me.adamjones/my-cool-mcp` you must prove ownership of `adamjones.me` via DNS or HTTP challenge
+MIT
 
-## Community Projects
-
-Check out [community projects](docs/community-projects.md) to explore notable registry-related work created by the community.
-
-## More documentation
-
-See the [documentation](./docs) for more details if your question has not been answered here!
+<!-- mcp-name: io.github.matiosera3-ops/defi-mcp -->
