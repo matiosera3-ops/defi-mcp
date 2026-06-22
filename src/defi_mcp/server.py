@@ -5,6 +5,7 @@ Currently supports: Polygon.
 """
 from defi_mcp.tools.price import get_token_price as _get_token_price
 from defi_mcp.tools.aave_position import get_aave_position as _get_aave_position
+from defi_mcp.tools.swap import simulate_swap as _simulate_swap
 from mcp.server.fastmcp import FastMCP
 from defi_mcp.tools.balance import get_token_balance as _get_token_balance
 
@@ -63,6 +64,27 @@ def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
         chain: The blockchain to query. Default: polygon.
     """
     return _get_token_price(token_symbol, chain)
+
+
+@mcp.tool()
+def simulate_swap(token_in: str, token_out: str, amount_in: float, chain: str = "polygon") -> dict:
+    """Simulate a Uniswap v3 swap on Polygon without submitting a transaction.
+
+    Uses the QuoterV2 contract to get an accurate on-chain quote. Tries all four
+    fee tiers (0.01%, 0.05%, 0.3%, 1%) and returns the best available output amount.
+
+    Supported tokens: USDC, USDC.e, USDT, WETH, WMATIC, WBTC, DAI, AAVE.
+
+    Args:
+        token_in: The input token symbol (e.g. WMATIC, USDC, WETH)
+        token_out: The output token symbol (e.g. USDC, WETH, USDT)
+        amount_in: Amount of token_in to swap (human-readable, e.g. 100.0 for 100 USDC)
+        chain: The blockchain to query. Default: polygon.
+
+    Returns:
+        A dictionary with amount_out, fee_tier_used_pct, and swap metadata.
+    """
+    return _simulate_swap(token_in, token_out, amount_in, chain)
 
 
 def main():

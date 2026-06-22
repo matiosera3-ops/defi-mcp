@@ -2,7 +2,7 @@
 
 An MCP (Model Context Protocol) server that gives AI agents direct, on-chain access to DeFi data on EVM chains — wallet balances, Aave v3 lending positions, and live token prices, with no centralized API in the middle.
 
-**Status:** Live and functional. 4 tools available today, more on the roadmap.
+**Status:** Live and functional. 5 tools available today, more on the roadmap.
 
 ## Why
 
@@ -63,6 +63,27 @@ Supported on Polygon: `ETH`/`WETH`, `MATIC`/`WMATIC`, `WBTC`, `USDC`, `USDT`.
 }
 ```
 
+### `simulate_swap`
+Simulates a Uniswap v3 swap on-chain via the QuoterV2 contract — no transaction submitted, no wallet needed. Tries all four fee tiers (0.01%, 0.05%, 0.3%, 1%) and returns the best available output amount.
+
+Supported tokens on Polygon: `USDC`, `USDC.e`, `USDT`, `WETH`, `WMATIC`, `WBTC`, `DAI`, `AAVE`.
+
+```json
+// simulate_swap(token_in="WMATIC", token_out="USDC", amount_in=100.0, chain="polygon")
+{
+  "chain": "polygon",
+  "token_in": "WMATIC",
+  "token_out": "USDC",
+  "amount_in": 100.0,
+  "amount_out": 7.990547,
+  "fee_tier_used_pct": 0.05,
+  "fee_tier_used_bps": 500,
+  "gas_estimate": 122770
+}
+```
+
+If no pool exists for the pair at any fee tier, returns `{"error": "No liquidity found for this pair on any fee tier"}`.
+
 ### `hello`
 Simple connectivity check — confirms the MCP server is reachable and responding.
 
@@ -117,7 +138,6 @@ npx @modelcontextprotocol/inspector uvx defi-mcp
 ## Roadmap
 
 - [ ] Track Uniswap v3 LP positions and impermanent loss
-- [ ] Simulate swaps with realistic slippage estimates
 - [ ] Monitor protocol TVLs
 - [ ] Additional chains (Ethereum, Arbitrum, Base)
 - [ ] `defi-mcp-cloud` — hosted tier with MEV-specific tools, caching, and higher rate limits

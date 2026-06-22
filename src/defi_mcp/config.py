@@ -15,6 +15,9 @@ TOKEN_ADDRESSES = {
 AAVE_POOL_ADDRESSES = {
     "polygon": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
 }
+UNISWAP_V3_QUOTER_V2_ADDRESSES = {
+    "polygon": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+}
 # Chainlink price feed addresses (token/USD), per chain.
 CHAINLINK_PRICE_FEEDS = {
     "polygon": {

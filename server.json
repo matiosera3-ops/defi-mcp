@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.matiosera3-ops/defi-mcp",
-  "description": "AI agent access to on-chain DeFi data: wallet balances, Aave v3 positions, token prices.",
+  "description": "AI agent access to on-chain DeFi data: wallet balances, Aave v3 positions, token prices, and Uniswap v3 swap simulation.",
   "repository": {
     "url": "https://github.com/matiosera3-ops/defi-mcp",
     "source": "github"
   },
-  "version": "0.1.3",
+  "version": "0.1.4",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "defi-mcp",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "transport": {
         "type": "stdio"
       },
