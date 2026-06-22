@@ -64,5 +64,10 @@ def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
     """
     return _get_token_price(token_symbol, chain)
 
-if __name__ == "__main__":
+
+def main():
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

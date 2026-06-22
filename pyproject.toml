@@ -1,6 +1,6 @@
 [project]
 name = "defi-mcp"
-version = "0.1.1"
+version = "0.1.2"
 description = "An MCP server giving AI agents access to DeFi data on EVM chains."
 authors = [{name = "Matthieu Ratsitohery", email = "matiosera3@gmail.com"}]
 license = {text = "MIT"}
@@ -11,6 +11,9 @@ dependencies = [
     "web3>=7.0.0",
     "python-dotenv>=1.0.0",
 ]
+
+[project.scripts]
+defi-mcp = "defi_mcp.server:main"
 
 [project.urls]
 Repository = "https://github.com/matiosera3-ops/defi-mcp"
