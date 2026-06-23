@@ -15,7 +15,7 @@ def simulate_swap(token_in: str, token_out: str, amount_in: float, chain: str = 
     Fee tiers with no pool or no liquidity are silently skipped.
 
     Args:
-        token_in: The input token symbol (e.g. WMATIC, USDC, WETH)
+        token_in: The input token symbol (e.g. WMATIC on Polygon, ARB on Arbitrum, WETH on both)
         token_out: The output token symbol (e.g. USDC, WETH, USDT)
         amount_in: Amount of token_in to swap (human-readable, e.g. 100.0 for 100 USDC)
         chain: The blockchain to query. Default: polygon.

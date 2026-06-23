@@ -8,8 +8,12 @@ from defi_mcp.config import CHAINLINK_PRICE_FEEDS
 def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
     """Get the current USD price of a token from a Chainlink price feed.
 
+    Available price feeds vary by chain:
+    - Polygon: ETH/WETH, MATIC/WMATIC, WBTC, USDC, USDT
+    - Arbitrum: ETH/WETH, WBTC, ARB, USDC, USDT
+
     Args:
-        token_symbol: The token symbol (e.g. ETH, WETH, MATIC, WMATIC, WBTC, USDC, USDT)
+        token_symbol: The token symbol (e.g. ETH, WBTC, USDC)
         chain: The blockchain to query. Default: polygon.
 
     Returns:

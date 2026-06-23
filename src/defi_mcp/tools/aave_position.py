@@ -4,7 +4,7 @@ from defi_mcp.lib.chains import get_web3
 from defi_mcp.lib.abis import AAVE_POOL_ABI
 from defi_mcp.config import AAVE_POOL_ADDRESSES
 
-# Aave v3 base currency on Polygon is USD with 8 decimals (price feed precision).
+# Aave v3 base currency is USD with 8 decimals on both Polygon and Arbitrum (price feed precision).
 BASE_CURRENCY_DECIMALS = 8
 
 
@@ -44,7 +44,7 @@ def get_aave_position(address: str, chain: str = "polygon") -> dict:
             health_factor_raw,
         ) = result
 
-        # Base amounts use the price feed's decimals (8 on Polygon's main market).
+        # Base amounts use the price feed's decimals (8 on both Polygon and Arbitrum).
         total_collateral_usd = total_collateral_base / (10 ** BASE_CURRENCY_DECIMALS)
         total_debt_usd = total_debt_base / (10 ** BASE_CURRENCY_DECIMALS)
         available_borrows_usd = available_borrows_base / (10 ** BASE_CURRENCY_DECIMALS)

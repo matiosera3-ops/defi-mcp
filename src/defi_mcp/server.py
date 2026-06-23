@@ -1,7 +1,7 @@
 """defi-mcp: An MCP server for DeFi data access.
 
 Exposes tools for AI agents to interact with DeFi protocols on EVM chains.
-Currently supports: Polygon.
+Currently supports: Polygon, Arbitrum.
 """
 from defi_mcp.tools.price import get_token_price as _get_token_price
 from defi_mcp.tools.aave_position import get_aave_position as _get_aave_position
@@ -26,7 +26,9 @@ def hello(name: str) -> str:
 def get_token_balance(address: str, token_symbol: str, chain: str = "polygon") -> dict:
     """Get the balance of an ERC-20 token for a given wallet address.
 
-    Supports common tokens on Polygon: USDC, USDC.e, USDT, WETH, WMATIC, WBTC, DAI, AAVE.
+    Supported tokens vary by chain:
+    - Polygon: USDC, USDC.e, USDT, WETH, WMATIC, WBTC, DAI, AAVE
+    - Arbitrum: USDC, USDC.e, USDT, WETH, WBTC, ARB
 
     Args:
         address: The wallet address to check
@@ -57,7 +59,9 @@ def get_aave_position(address: str, chain: str = "polygon") -> dict:
 def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
     """Get the current USD price of a token from a Chainlink price feed.
 
-    Supports: ETH, WETH, MATIC, WMATIC, WBTC, USDC, USDT on Polygon.
+    Available price feeds vary by chain:
+    - Polygon: ETH/WETH, MATIC/WMATIC, WBTC, USDC, USDT
+    - Arbitrum: ETH/WETH, WBTC, ARB, USDC, USDT
 
     Args:
         token_symbol: The token symbol (e.g. ETH, WBTC, USDC)
@@ -68,15 +72,17 @@ def get_token_price(token_symbol: str, chain: str = "polygon") -> dict:
 
 @mcp.tool()
 def simulate_swap(token_in: str, token_out: str, amount_in: float, chain: str = "polygon") -> dict:
-    """Simulate a Uniswap v3 swap on Polygon without submitting a transaction.
+    """Simulate a Uniswap v3 swap on Polygon or Arbitrum without submitting a transaction.
 
     Uses the QuoterV2 contract to get an accurate on-chain quote. Tries all four
     fee tiers (0.01%, 0.05%, 0.3%, 1%) and returns the best available output amount.
 
-    Supported tokens: USDC, USDC.e, USDT, WETH, WMATIC, WBTC, DAI, AAVE.
+    Supported tokens vary by chain:
+    - Polygon: USDC, USDC.e, USDT, WETH, WMATIC, WBTC, DAI, AAVE
+    - Arbitrum: USDC, USDC.e, USDT, WETH, WBTC, ARB
 
     Args:
-        token_in: The input token symbol (e.g. WMATIC, USDC, WETH)
+        token_in: The input token symbol (e.g. WMATIC on Polygon, ARB on Arbitrum, WETH on both)
         token_out: The output token symbol (e.g. USDC, WETH, USDT)
         amount_in: Amount of token_in to swap (human-readable, e.g. 100.0 for 100 USDC)
         chain: The blockchain to query. Default: polygon.
