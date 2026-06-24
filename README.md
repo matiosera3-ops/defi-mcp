@@ -157,6 +157,10 @@ npx @modelcontextprotocol/inspector uvx defi-mcp
 
 Open-core model: this repository (MIT licensed) covers standard on-chain read tools. A separate `defi-mcp-cloud` will offer a hosted version with MEV-related tools, request caching, and managed RPC access for users who don't want to run their own infrastructure.
 
+## Resources
+
+- [defi-storage-cheatsheet](https://github.com/matiosera3-ops/defi-storage-cheatsheet) — verified EVM storage slot layouts for Aave v3 and Uniswap v3, with `web3.py` snippets. Useful if you want to read on-chain state directly via `eth_getStorageAt` instead of calling `view` functions — the lower-level approach behind some of what this server does under the hood.
+
 ## Contributing
 
 Issues and PRs welcome. This is an early-stage project — feedback on what tools would actually be useful to you is especially valuable.
